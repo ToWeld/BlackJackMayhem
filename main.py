@@ -8,7 +8,7 @@ FPS=30
 
 DEFAULT_FPS=30
 
-VERSION="0.2-indev"
+VERSION="0.21-indev"
 
 class MainMenu:
     def __init__(self):
@@ -20,7 +20,7 @@ class MainMenu:
         self.window=AnimatedSprite(FILES["window"], LAYOUT["window"],ANIMATIONDATA["window"])
         self.main.add(self.window)
 
-        self.enterance_rect=pygame.Rect(LAYOUT["enterance_rect"])
+        self.entrance_rect=pygame.Rect(LAYOUT["entrance_rect"])
 
         self.bg=load_image(FILES["background"])[0]
         self.bg_cords=LAYOUT["background"]
@@ -39,7 +39,7 @@ class MainMenu:
         global need_update
         global act
         if i.type==pygame.MOUSEBUTTONDOWN:
-            if self.enterance_rect.collidepoint(i.pos):
+            if self.entrance_rect.collidepoint(i.pos):
                 self.walking_sound.play()
                 need_update=True
                 global FPS
@@ -58,7 +58,8 @@ class MainMenu:
                     clock.tick(FPS)
                     i=i-1
                 pygame.time.delay(100)
-                act=False
+                global run
+                run=False
 
 
 class Shooter:
@@ -70,7 +71,7 @@ class Shooter:
         self.window=AnimatedSprite(FILES["window"], LAYOUT["window"],ANIMATIONDATA["window"])
         self.main.add(self.window)
 
-        self.enterance_rect=pygame.Rect(LAYOUT["enterance_rect"])
+        self.entrance_rect=pygame.Rect(LAYOUT["entrance_rect"])
 
         self.bg=load_image(FILES["background"])[0]
         self.bg_cords=LAYOUT["background"]
@@ -78,7 +79,7 @@ class Shooter:
         self.collide_rect_ratio=pygame.sprite.collide_rect_ratio(0.9)
         
     def draw(self, screen):
-        screen.fill((0,255,0))
+        screen.fill((0,50,100))
 
     def event_handle(self, i):
         pass
@@ -95,11 +96,15 @@ class ScreenUpdate:
         
 class Transition:
     def __init__(self, effect, new_scene):
+        global active
+        active=False
         self.effect=effect
         self.new_scene=new_scene
     def draw(self):
         if self.effect.is_end():
             pygame.mixer.fadeout(1000)
+            global active
+            active=True
             global FPS
             FPS=DEFAULT_FPS
             global scene
@@ -119,8 +124,9 @@ dis=pygame.display.set_mode((900,600))
 pygame.mouse.set_visible(False)
 pygame.display.set_caption("BlackJack Mayhem!        ver."+VERSION)
 dis.fill((0,0,0))
-act=True
+run=True
 need_update=True
+active=True
 general_group=pygame.sprite.Group()
 cursor=Sprite(assets_list.GENERAL["cursor"], (1000,1000), colorkey=-1)
 general_group.add(cursor)
@@ -129,14 +135,15 @@ dis.fill((0,0,0))
 scene=MainMenu()
 update_class=ScreenUpdate()
 
-while act:    
+while run:    
     for i in pygame.event.get():
         if i.type==pygame.MOUSEMOTION:
             cursor.rect.center=i.pos
             need_update=True
         elif i.type==pygame.QUIT:
-            act=False
-        scene.event_handle(i)
+            run=False
+        if active:
+            scene.event_handle(i)
     if need_update:
         update_class.draw()
     clock.tick(FPS)

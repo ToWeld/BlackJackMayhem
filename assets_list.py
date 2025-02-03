@@ -2,7 +2,7 @@ GENERAL={"cursor":"effects/cursor.png"}
 MAIN_MENU_FILES={"background":"main_menu/background.png",
                  "window":"main_menu/window.png", "wound":"effects/wound.png"}
 MAIN_MENU_LAYOUT={"background":(0,0),
-                  "window":(660,260),"enterance_rect":(349,283,226,250)}
+                  "window":(660,260),"entrance_rect":(349,283,226,250)}
 MAIN_MENU_ANIMATIONDATA={"window":(140,160,5)}
 MAIN_MENU_SFX={"walking":"sfx/walking.mp3", "shot":"sfx/shot.wav"}
 
