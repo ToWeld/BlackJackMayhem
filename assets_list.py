@@ -6,7 +6,7 @@ MAIN_MENU_LAYOUT={"background":(0,0),
 MAIN_MENU_ANIMATIONDATA={"window":(140,160,5)}
 MAIN_MENU_SFX={"walking":"sfx/walking.mp3", "shot":"sfx/shot.wav"}
 
-SHOOTER_FILES={"background":"shooter/background.png","number":"shooter/numbers.png",
+SHOOTER_FILES={"background":"shooter/background.png","digit":"effects/digits.png",
                "wound":"effects/wound.png","target":"shooter/targets.png"}
-SHOOTER_LAYOUT={"background":(0,0), "timer":(450,200), "SCORE":(50,700)}
-SHOOTER_ANIMATIONDATA={"number":(50,50,10)}
+SHOOTER_LAYOUT={"background":(0,0), "timer":(450,200), "score":(50,700)}
+SHOOTER_ANIMATIONDATA={"digit":(60,60,10)}
