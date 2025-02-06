@@ -39,7 +39,7 @@ class MainMenu:
         self.draw_normal(screen)
         self.frame=self.frame+1
         self.window.next_frame(0,self.window.frame_count-1)
-        if self.frame==self.window.frame_count:
+        if self.frame==self.window.frame_count+1:
             pygame.time.delay(500)
             self.master.terminate()
 
