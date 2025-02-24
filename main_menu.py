@@ -40,14 +40,15 @@ class MainMenu:
         self.frame=self.frame+1
         self.window.next_frame(0,self.window.frame_count-1)
         if self.frame==self.window.frame_count+1:
-            pygame.time.delay(500)
+            pygame.mixer.fadeout(700)
+            pygame.time.delay(700)
             self.master.terminate()
 
     def event_handle(self, i):
         if i.type == pygame.MOUSEBUTTONDOWN:
             if self.entrance_rect.collidepoint(i.pos):
                 self.walking_sound.play()
-                self.master.need_update = True
+                self.master.nu()
                 self.master.fps = 90
                 self.master.transition(effects.effect_1(150), shooter.Shooter(self.master))
 

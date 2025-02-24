@@ -9,15 +9,20 @@ FPS=30
 
 DEFAULT_FPS=30
 
-VERSION="0.22-indev"
+VERSION="0.23-indev"
 
-#---  Органы взаимодействия для Controller  --:
-#need_update - необходима отриисовка всего экрана заново
-#fps - количество кадров в секунду
+#:---  Органы взаимодействия для Controller  ---
+
+#nu(x=True) - (need_update) необходима отрисовка всего экрана заново
+#set_fps(x) - количество кадров в секунду
 #draw(screen) - отрисовка экрана
-#transition(effect, new_scene) - создать переход с эффектом из одной сцены в другую
-#cutscene(self, fps) - запустить анимацию(катсцену) с возвратом на прежнюю сцену
+#transition(effect, new_scene) - запустить переход с эффектом с одной сцены на другую
+#cutscene(fps) - запустить анимацию(катсцену) с возвратом на прежнюю сцену
 #terminate() - покончить с этим...
+
+#SCREEN_SIZE - константа - размер окна
+#cursor - объект курсора
+#:---  ---:
 
 class Controller:
     def __init__(self, cursor):
@@ -29,6 +34,8 @@ class Controller:
         self.scene=None #текущая сцена
         self.cursor=cursor #курсор
         self.effect=None #текущий эффект перехода
+        
+        self.SCREEN_SIZE=(900, 600)
 
     def draw_normal(self, screen):
         screen.fill((0,0,0))
@@ -71,6 +78,12 @@ class Controller:
     def terminate(self):
         self.run=False
 
+    def nu(self, x=True):
+        self.need_update=x
+
+    def set_fps(self, x):
+        self.fps=int(x)
+
 pygame.init()
 clock=pygame.time.Clock()
 dis=pygame.display.set_mode((900,600))
@@ -85,16 +98,16 @@ master=Controller(cursor)
 master.scene=main_menu.MainMenu(master)
 
 dis.fill((0,0,0))
-
 while master.run:
     for i in pygame.event.get():
         if i.type==pygame.MOUSEMOTION:
             cursor.rect.center=i.pos
-            master.need_update=True
+            master.nu()
         elif i.type==pygame.QUIT:
             master.run=False
         if master.active:
             master.scene.event_handle(i)
+            
     if master.need_update:
         master.draw(dis)
         if master.active:
