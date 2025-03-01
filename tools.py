@@ -4,7 +4,7 @@ import pygame
 main_dir = os.path.split(os.path.abspath(__file__))[0]
 data_dir = os.path.join(main_dir, "data")
 
-def load_image(name, colorkey=None, scale=1):
+def load_image(name, scale=1):
     try:
         fullname = os.path.join(data_dir, name)
         image = pygame.image.load(fullname)
@@ -16,11 +16,6 @@ def load_image(name, colorkey=None, scale=1):
     size = image.get_size()
     size = (size[0] * scale, size[1] * scale)
     image = pygame.transform.scale(image, size)
-
-    if colorkey is not None:
-        if colorkey == -1:
-            colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey, pygame.RLEACCEL)
     return image, image.get_rect()
 
 def load_sound(name):
@@ -42,28 +37,30 @@ def load_sound(name):
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, name, cords, colorkey=None, scale=1):
         super().__init__()
-        self.image, self.rect=load_image(name, colorkey=colorkey, scale=scale)
+        self.image, self.rect=load_image(name, scale=scale)
         self.rect.center=cords
 
 class AnimatedSprite(pygame.sprite.Sprite):
-    def __init__(self, name, cords, framedata, colorkey=None, scale=1):
+    def __init__(self, name, cords, framedata, scale=1):
         super().__init__()
-        image, rect=load_image(name, colorkey=colorkey ,scale=scale)
+        image, rect=load_image(name,scale=scale)
         self.rect=pygame.Rect(cords[0], cords[1],framedata[0],framedata[1])
         self.curr_frame=0
         self.frame_count=framedata[2]
-        self.frames=[]
+        self.frames=self.strip_sheet(image, rect, framedata)
         self.strip_sheet(image, rect, framedata)
         self.set_frame(0)
 
     def strip_sheet(self, image, rect, framedata):
-        self.frames=[]
+        frames=[]
         for i in range(int(rect.h/framedata[1])):
             for j in range(int(rect.w/framedata[0])):
-                self.frames.append(image.subsurface(pygame.Rect(j*framedata[0], i*framedata[1], framedata[0], framedata[1])))
+                frames.append(image.subsurface(pygame.Rect(j*framedata[0], i*framedata[1], framedata[0], framedata[1])))
+        return frames
 
     def set_frame(self, i):
         self.image=self.frames[i]
+        self.curr_frame=i
 
     def next_frame(self, start, end):
         if self.curr_frame>=end or self.curr_frame<start:
@@ -74,13 +71,13 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.image=self.frames[self.curr_frame]
 
 class Counter:
-    def __init__(self, digit_capacity, name, cords, framedata, colorkey=None, scale=1):
+    def __init__(self, digit_capacity, name, cords, framedata, scale=1):
         self.number=0
         self.dec_dot=10**digit_capacity
         self.cords=cords
         self.digit_capacity=digit_capacity
         self.framedata=framedata
-        image, rect=load_image(name, colorkey=colorkey, scale=scale)
+        image, rect=load_image(name, scale=scale)
         self.digit_images=[]
         for i in range(int(rect.h/framedata[1])):
             for j in range(int(rect.w/framedata[0])):
@@ -126,9 +123,13 @@ class Counter:
     def get_number(self):
         return self.number
 
+    def set_pos(self, cords):
+        self.cords=cords
+
 class TimerLine:
     def __init__(self, cords, start_size, slice_size):
         self.cords=cords
+        self.start_size=start_size
         self.slice_size=slice_size
         self.rect=pygame.Rect(cords[0], cords[1], start_size[0], start_size[1])
 
@@ -141,6 +142,10 @@ class TimerLine:
     def sub(self):
         if self.rect.width>0:
             self.rect.width=self.rect.width-self.slice_size
+
+    def reset(self):
+        self.rect.size=self.start_size
+        
 
     def is_end(self):
         if self.rect.width<=0:

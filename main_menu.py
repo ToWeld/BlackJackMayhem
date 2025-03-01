@@ -25,8 +25,6 @@ class MainMenu:
         self.shot_sound = load_sound(SFX["shot"])
         self.shot_sound.set_volume(0.3)
 
-        self.collide_rect_ratio = pygame.sprite.collide_rect_ratio(0.9)
-
         self.frame=0
 
         self.draw=self.draw_normal
@@ -52,9 +50,8 @@ class MainMenu:
                 self.master.fps = 90
                 self.master.transition(effects.effect_1(150), shooter.Shooter(self.master))
 
-            elif self.collide_rect_ratio(self.master.cursor, self.window):
+            elif self.window.rect.colliderect(self.master.cursor):
                 self.shot_sound.play()
-                self.draw=self.draw_cutscene
                 self.master.cutscene(30)
 
     def is_end(self):
