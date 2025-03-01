@@ -9,9 +9,9 @@ FPS=30
 
 DEFAULT_FPS=30
 
-VERSION="0.23-indev"
+VERSION="0.25-indev"
 
-#:---  Органы взаимодействия для Controller  ---
+#:---  Органы управления Controller  ---:
 
 #nu(x=True) - (need_update) необходима отрисовка всего экрана заново
 #set_fps(x) - количество кадров в секунду
@@ -21,7 +21,7 @@ VERSION="0.23-indev"
 #terminate() - покончить с этим...
 
 #SCREEN_SIZE - константа - размер окна
-#cursor - объект курсора
+#cursor - pygame.Rect курсора
 #:---  ---:
 
 class Controller:
@@ -59,7 +59,7 @@ class Controller:
             pygame.mixer.fadeout(100)
             self.draw=self.draw_normal
         else:
-            self.scene.draw(screen)
+            self.scene.draw_cutscene(screen)
 
     def transition(self, effect, new_scene):
         self.active=False
@@ -87,12 +87,14 @@ class Controller:
 pygame.init()
 clock=pygame.time.Clock()
 dis=pygame.display.set_mode((900,600))
-pygame.mouse.set_visible(False)
+#pygame.mouse.set_visible(False)
 pygame.display.set_caption("BlackJack Mayhem!        ver."+VERSION)
+pygame.display.set_icon(load_image(assets_list.GENERAL["icon"])[0])
 
-general_group=pygame.sprite.Group()
-cursor=Sprite(assets_list.GENERAL["cursor"], (1000,1000), colorkey=-1)
-general_group.add(cursor)
+cursor_image, cursor_image_rect=load_image(assets_list.GENERAL["cursor"])
+xoffset=cursor_image_rect.width//2
+yoffset=cursor_image_rect.height//2
+cursor=pygame.Rect(1000, 1000, 4, 4)
 
 master=Controller(cursor)
 master.scene=main_menu.MainMenu(master)
@@ -101,7 +103,7 @@ dis.fill((0,0,0))
 while master.run:
     for i in pygame.event.get():
         if i.type==pygame.MOUSEMOTION:
-            cursor.rect.center=i.pos
+            cursor.center=i.pos
             master.nu()
         elif i.type==pygame.QUIT:
             master.run=False
@@ -111,7 +113,7 @@ while master.run:
     if master.need_update:
         master.draw(dis)
         if master.active:
-            general_group.draw(dis)
+            dis.blit(cursor_image, (cursor.centerx-xoffset, cursor.centery-yoffset))
         pygame.display.flip()
     clock.tick(master.fps)
         
