@@ -87,7 +87,7 @@ class Controller:
 pygame.init()
 clock=pygame.time.Clock()
 dis=pygame.display.set_mode((900,600))
-pygame.mouse.set_visible(False)
+#pygame.mouse.set_visible(False)
 pygame.display.set_caption("BlackJack Mayhem!        ver."+VERSION)
 pygame.display.set_icon(load_image(assets_list.GENERAL["icon"])[0])
 
