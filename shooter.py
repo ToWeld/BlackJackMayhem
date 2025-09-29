@@ -237,7 +237,8 @@ class Shooter:
                         s=s+i
                 else:
                     s=s+i
-                        
+
+            self.shot_tr=[]      
             add_score=1-(abs(s-self.goal_counter.get_number())/self.goal_counter.get_number())
             if s!=self.goal_counter.get_number():
                 add_score=add_score-0.15
